@@ -3,3 +3,5 @@
 
 Nearest Neighbor를 더 빠르게 하는 법
 facebook Faiss를 참고하자.
+
+pickle을 이용하면 프로그램 실행 중에 특정 객체를 파일로 저장하고 파일 로드시 객체로 즉시 복원 해낼 수 있다.
