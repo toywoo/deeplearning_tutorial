@@ -52,3 +52,6 @@ http://vision.stanford.edu/teaching/cs231n-demos/knn
 ### Softmax Classifier
 ![softmax_log](images/softmax_log.png)
 원본 점수가 세 개가 있다 그러나 음수가 있으므로 이를 exp()를 통해서 지수화를 해서 양수로 바꾼다 그런 뒤에 정규화를 진행시켜준다. 그럼 확률로서 알 수 있고 확률 함수 L_i를 이용해서 손실 정도를 평가할 수 있다. 이를 통해서 최적화 하면 올바른 w을 구할 수 있다.
+더 자세한 내용은 DL_scratch를 보도록 하자
+
+### SVM loss
