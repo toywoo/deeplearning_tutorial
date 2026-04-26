@@ -1,0 +1,56 @@
+# Jupyter Notebook (.ipynb) Clean Parsing Skill
+
+## 🎯 Description
+이 스킬(Skill)은 Jupyter Notebook(`.ipynb`)의 내부 JSON 구조를 직접 파싱하여, 마크다운 텍스트와 파이썬 실행 코드를 문자열 이스케이프 오류(예: `\n",`) 없이 가장 안전하고 깔끔하게 추출하는 파이썬 템플릿과 행동 강령을 정의합니다. 
+
+단순한 텍스트 기반 정규식(Regex)이나 문자열 자르기(Slicing)로 접근하면 노트북의 버전이나 포맷 변화에 쉽게 깨지기 때문에, 내장 `json` 모듈을 통한 추상화된 접근법을 표준화합니다.
+
+## 🛠️ Python Script Template
+AI 에이전트 혹은 사용자가 `.ipynb` 파일에서 순수 소스 코드나 텍스트를 추출해야 할 때, 터미널 환경이나 별도의 외부 라이브러리(`nbconvert` 등) 없이 아래의 스니펫을 바로 복사해 활용합니다.
+
+```python
+import json
+
+def parse_ipynb(file_path, output_format='code_only'):
+    """
+    Jupyter Notebook (.ipynb) 파일을 깔끔하게 파싱합니다.
+    
+    Args:
+        file_path (str): .ipynb 파일 절대구간/상대경로
+        output_format (str): 
+            - 'code_only': 파이썬 코드 블록만 추출
+            - 'markdown_only': 마크다운 텍스트만 추출
+            - 'interleaved': 마크다운과 코드를 모두 깔끔하게 변환
+    """
+    with open(file_path, 'r', encoding='utf-8') as f:
+        notebook_data = json.load(f)
+        
+    extracted_content = []
+    
+    for cell in notebook_data.get('cells', []):
+        cell_type = cell.get('cell_type')
+        source_lines = cell.get('source', [])
+        
+        # 배열 형태의 줄바꿈 리스트를 하나의 깔끔한 String 객체로 결합
+        source_text = "".join(source_lines)
+        if not source_text.strip():
+            continue
+            
+        if cell_type == 'code' and output_format in ['code_only', 'interleaved']:
+            extracted_content.append(f"```python\n{source_text}\n```")
+                
+        elif cell_type == 'markdown' and output_format in ['markdown_only', 'interleaved']:
+            extracted_content.append(source_text)
+                
+    return "\n\n".join(extracted_content)
+
+# 사용 예시:
+# clean_code = parse_ipynb('1_4_train_neu_net.ipynb', output_format='code_only')
+# print(clean_code)
+```
+
+## 🧠 Agent Action Rules (지시 사항)
+Gemini CLI 등에서 에이전트가 `.ipynb` 코드를 추출하라는 명령을 받을 경우 다음을 엄격히 준수합니다:
+1. **JSON 기반 접근**: 파일을 단순히 `.txt`로 읽은 후 `\n",` 같은 더티 파싱이나 정규표현식을 절대 시도하지 마세요. 반드시 `json.load()`를 사용해야 합니다.
+2. **배열 병합**: Jupyter Notebook은 코드를 줄 단위 배열(`List[str]`)로 분리해 보관합니다. 무작정 출력하지 말고 `"".join(source)`를 거쳐 하나의 스크립트로 결합하세요.
+3. **무결성 출력**: 추출된 파이썬 코드는 사용자에게 렌더링될 수 있도록 반드시 ```python ... ``` 형태의 마크다운 코드 블록으로 감싸서 리포트합니다.
