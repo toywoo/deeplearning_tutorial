@@ -33,4 +33,4 @@ pip install -r requirements.txt
 Jupyter Notebook 파일(`.ipynb`)을 계속해서 사용하시려면, 우측 상단의 커널 선택(Kernel Select) 버튼을 누르고 방금 생성한 가상 환경(`.venv`)을 노트북 실행 커널로 선택하여 코드를 실행해 주시면 됩니다.
 
 ## 5. requirements.txt 추출
-pip freeze > requirements.txt
+pip freeze > requirements
